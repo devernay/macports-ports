@@ -89,6 +89,10 @@ if { ${subport} in [list "${name}-qtwebengine" "${name}-qtwebengine-docs"] } {
     # Backport fix for bundled libpng
     patchfiles-append   patch-qtwebengine-libpng.diff
 
+    # the macOS 27 SDK no longer declares the deprecated kSBXProfile* constants
+    # in <sandbox.h>; libsystem_sandbox still exports them
+    patchfiles-append   patch-qtwebengine-sandbox-kSBXProfile-macos27.diff
+
     # fixes for newer LLVM/Clang; Sequoia or newer
     if {${os.platform} eq "darwin" && ${os.major} >= 24} {
         patchfiles-append \
