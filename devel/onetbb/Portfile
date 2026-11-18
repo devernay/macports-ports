@@ -8,7 +8,7 @@ github.setup        uxlfoundation oneTBB 2023.2.0 v
 github.tarball_from archive
 
 name                onetbb
-revision            0
+revision            1
 categories          devel parallel
 license             Apache-2
 maintainers         {makr @mohd-akram} openmaintainer
@@ -25,6 +25,13 @@ checksums           rmd160  21b5315bc60b30bf1e39022d27a19ff77fe761c6 \
 
 patchfiles          patch-onetbb-older-platforms.diff \
                     patch-onetbb-dispatch-fallback.diff
+
+# Fix a crash at exit in programs linked with libtbb: libtbbmalloc fails
+# to pin itself with an absolute install name, and libtbb frees memory
+# through it after unloading it.
+# https://github.com/uxlfoundation/oneTBB/pull/1849
+patchfiles-append   patch-onetbb-tbbmalloc-pin-dladdr.diff \
+                    patch-onetbb-release-before-unlink.diff
 
 # https://trac.macports.org/ticket/69657 (clang < 900)
 # https://trac.macports.org/ticket/72724

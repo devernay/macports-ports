@@ -1,0 +1,20 @@
+Release the global_control storage before unloading the libraries:
+global_control_release() frees it with cache_aligned_deallocate(),
+which calls scalable_aligned_free() from libtbbmalloc when it is
+loaded, so it must run before dynamic_unlink_all(). The order became
+wrong with https://github.com/uxlfoundation/oneTBB/pull/1346, which added
+global_control_release() after dynamic_unlink_all().
+
+Reported upstream in https://github.com/uxlfoundation/oneTBB/pull/1849#issuecomment-6978073786
+--- src/tbb/governor.cpp.orig
++++ src/tbb/governor.cpp
+@@ -119,8 +119,8 @@
+ #endif /* TBB_USE_ASSERT */
+ 
+     system_topology::destroy();
+-    dynamic_unlink_all();
+     global_control_release();
++    dynamic_unlink_all();
+ }
+ 
+ rml::tbb_server* governor::create_rml_server ( rml::tbb_client& client ) {
