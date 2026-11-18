@@ -1,0 +1,21 @@
+Fix the UABS and ULABS macros: without parentheses around the argument,
+ULABS( xx * yy - xy * yx ) in FT_Matrix_Check() computes the wrong
+determinant, so FT_Set_Transform() resets some reflected matrices
+rotated by about 45, 135, 225 or 315 degrees to the identity.
+
+Backport of upstream commit 05f343a64b1fc0ecd9d7e34d5510494cbe3b3793,
+not in a release yet (2.15.0 is affected):
+https://gitlab.freedesktop.org/freetype/freetype/-/commit/05f343a64b1fc0ecd9d7e34d5510494cbe3b3793
+--- include/freetype/internal/ftcalc.h.orig
++++ include/freetype/internal/ftcalc.h
+@@ -77,8 +77,8 @@
+ #endif /* FT_INT64 */
+ 
+ 
+-#define ULABS( a )  ( a >= 0 ? (FT_ULong)a : 0UL - (FT_ULong)a )
+-#define  UABS( a )  ( a >= 0 ?  (FT_UInt)a : 0U  -  (FT_UInt)a )
++#define ULABS( a )  ( (a) >= 0 ? (FT_ULong)(a) : 0UL - (FT_ULong)(a) )
++#define  UABS( a )  ( (a) >= 0 ?  (FT_UInt)(a) : 0U  -  (FT_UInt)(a) )
+ 
+ 
+   /**************************************************************************

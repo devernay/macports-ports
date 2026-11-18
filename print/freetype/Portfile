@@ -5,7 +5,7 @@ PortGroup               muniversal 1.0
 
 name                    freetype
 version                 2.15.0
-revision                0
+revision                1
 set docdistname         ${name}-doc-${version}
 use_xz                  yes
 checksums               ${distname}${extract.suffix} \
@@ -45,6 +45,12 @@ patchfiles \
     freetype-config-no-pkg-config.patch \
     patch-src_base_ftrfork.c.diff \
     patch-modules.cfg.diff
+
+# Fix FT_Set_Transform() resetting some reflected and rotated matrices
+# to the identity; remove with the next release.
+# https://gitlab.freedesktop.org/freetype/freetype/-/commit/05f343a64b1fc0ecd9d7e34d5510494cbe3b3793
+patchfiles-append \
+    patch-include_freetype_internal_ftcalc.h.diff
 
 depends_build           path:bin/pkg-config:pkgconfig
 
